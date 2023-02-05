@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import os
 
 cwd = os.getcwd()
@@ -26,7 +25,7 @@ def int_if_possible(input_str):
 gdp.dropna(how='all', axis=1, inplace=True)
 population.dropna(how='all', axis=1, inplace=True)
 non_year_colnames = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code']
-common_years = set.intersection(set(np.unique(co2['Year'])), set(map(int_if_possible, gdp.columns)),
+common_years = set.intersection(set(co2['Year']), set(map(int_if_possible, gdp.columns)),
                                 set(map(int_if_possible, population.columns)))
 
 # common_years = list(map(str, common_years))

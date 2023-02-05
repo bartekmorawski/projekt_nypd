@@ -28,23 +28,29 @@ non_year_colnames = ['Country Name', 'Country Code', 'Indicator Name', 'Indicato
 common_years = set.intersection(set(co2['Year']), set(map(int_if_possible, gdp.columns)),
                                 set(map(int_if_possible, population.columns)))
 
+
 # common_years = list(map(str, common_years))
 # print(gdp[non_year_colnames + list(map(str, common_years))])
 # print(population[non_year_colnames + list(map(str, common_years))])
 # print(co2.loc[co2['Year'].isin(common_years)])
 
 # Common Years dataframes
-gdp_cy = gdp[non_year_colnames + list(map(str, common_years))]
-population_cy = population[non_year_colnames + list(map(str, common_years))]
-co2_cy = co2.loc[co2['Year'].isin(common_years)]
+def common_yrs_dfs(gdp, population, co2):
+    gdp_cy = gdp[non_year_colnames + list(map(str, common_years))]
+    population_cy = population[non_year_colnames + list(map(str, common_years))]
+    co2_cy = co2.loc[co2['Year'].isin(common_years)]
+    return gdp_cy, population_cy, co2_cy
+
+
+gdp_cy, population_cy, co2_cy = common_yrs_dfs(gdp, population, co2)
 
 
 # common and Selected Years dataframes
-def selected_yrs_dfs(start, end):
-    gdp_sy = gdp_cy[non_year_colnames + list(map(str, range(start, end + 1)))]
-    population_sy = population_cy[non_year_colnames + list(map(str, range(start, end + 1)))]
-    co2_sy = co2_cy.loc[co2_cy['Year'].isin(range(start, end + 1))]
+def selected_yrs_dfs(start, end, gdp, population, co2):
+    gdp_sy = gdp[non_year_colnames + list(map(str, range(start, end + 1)))]
+    population_sy = population[non_year_colnames + list(map(str, range(start, end + 1)))]
+    co2_sy = co2.loc[co2['Year'].isin(range(start, end + 1))]
     return gdp_sy, population_sy, co2_sy
 
 
-gdp_sy, population_sy, co2_sy = selected_yrs_dfs(1970, 2000)
+gdp_sy, population_sy, co2_sy = selected_yrs_dfs(1970, 2000, gdp_cy, population_cy, co2_cy)

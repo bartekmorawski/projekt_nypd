@@ -20,6 +20,7 @@ def int_if_possible(input_str):
 
 gdp.dropna(how='all', axis=1, inplace=True)
 population.dropna(how='all', axis=1, inplace=True)
+
 common_years = set(np.unique(co2.Year)) & set(map(int_if_possible, gdp.columns)) & set(map(int_if_possible, population.columns))
 
 

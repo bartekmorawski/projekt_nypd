@@ -15,14 +15,14 @@ gdp = pd.read_csv(file_NY, skiprows=4)
 population = pd.read_csv(file_SP, skiprows=4)
 co2 = pd.read_csv(file_co2)
 
-
+# auxiliary function to make int from strings if they are numbers
 def int_if_possible(input_str):
     try:
         return int(input_str)
     except ValueError:
         return None
 
-
+# drop empty columns (last), define non-year colnames for gdp and population dfs, fins years in all 3 dfs
 gdp.dropna(how='all', axis=1, inplace=True)
 population.dropna(how='all', axis=1, inplace=True)
 non_year_colnames = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code']
@@ -72,20 +72,17 @@ def fifth_max(x):
 
 
 def top_5_co2_by_year(co2):
-    pc_5_value_by_year = co2.groupby(['Year']).agg({'Per Capita': [fifth_max]})
+    pc_5_value_by_year = co2.groupby(['Year']).agg({'Per Capita': [fifth_max]}) # 5th value of co2 emission pc for yr
     pc_5_value_by_year.columns = pc_5_value_by_year.columns.droplevel(0)
-    idx_top5 = [is_top(year, pc, pc_5_value_by_year) for year, pc in zip(co2['Year'], co2['Per Capita'])]
+    idx_top5 = [is_top(year, pc, pc_5_value_by_year) for year, pc in zip(co2['Year'], co2['Per Capita'])] # indexes
     top5_by_year = co2[np.array(idx_top5, dtype=bool)][['Year', 'Country', 'Per Capita', 'Total']] \
-        .reset_index(drop=True)
+        .reset_index(drop=True) # select columns by names and rows with indexes
     return top5_by_year
 
 
 x = top_5_co2_by_year(co2_sy)
 
-
-# print(x)
-
-
+# df with added columns with gdp per capita for each year
 def gdp_pc_by_year(gdp, population, start, end):
     str_years = list(map(str, list(range(start, end + 1)))) # list of strings of considered years
     a = pd.merge(gdp, population, on='Country Name') # gdp and population with columns _x with gdp, _y with population

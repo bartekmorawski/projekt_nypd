@@ -25,6 +25,6 @@ parser.add_argument("--end", type=int, default=2021, help="end year")
 
 args = parser.parse_args()
 
-gdp = pd.read_csv(args.file_NY, skiprows=3)
-populacja = pd.read_csv(args.file_SP, skiprows=3)
+gdp = pd.read_csv(args.file_NY, skiprows=4)
+populacja = pd.read_csv(args.file_SP, skiprows=4)
 co2 = pd.read_csv(args.file_co2, skiprows=0)

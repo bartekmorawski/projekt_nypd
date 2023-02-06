@@ -68,7 +68,7 @@ def fifth_max(x):
     return x.nlargest(5).min()
 
 
-def most_co2_by_year(co2):
+def top_5_co2_by_year(co2):
     pc_5_value_by_year = co2.groupby(['Year']).agg({'Per Capita': [fifth_max]})
     pc_5_value_by_year.columns = pc_5_value_by_year.columns.droplevel(0)
     idx_top5 = [is_top(year, pc, pc_5_value_by_year) for year, pc in zip(co2['Year'], co2['Per Capita'])]
@@ -77,5 +77,5 @@ def most_co2_by_year(co2):
     return top5_by_year
 
 
-x = most_co2_by_year(co2_sy)
+x = top_5_co2_by_year(co2_sy)
 print(x)

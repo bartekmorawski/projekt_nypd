@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import numpy as np
 
 cwd = os.getcwd()
 
@@ -54,3 +55,27 @@ def selected_yrs_dfs(start, end, gdp, population, co2):
 
 
 gdp_sy, population_sy, co2_sy = selected_yrs_dfs(1970, 2000, gdp_cy, population_cy, co2_cy)
+
+
+def is_top(year, pc, idx_most):
+    if pc >= idx_most.at[year, 'fifth_max']:
+        return 1
+    else:
+        return 0
+
+
+def fifth_max(x):
+    return x.nlargest(5).min()
+
+
+def most_co2_by_year(co2):
+    pc_5_value_by_year = co2.groupby(['Year']).agg({'Per Capita': [fifth_max]})
+    pc_5_value_by_year.columns = pc_5_value_by_year.columns.droplevel(0)
+    idx_top5 = [is_top(year, pc, pc_5_value_by_year) for year, pc in zip(co2['Year'], co2['Per Capita'])]
+    top5_by_year = co2[np.array(idx_top5, dtype=bool)][['Year', 'Country', 'Per Capita', 'Total']]\
+        .reset_index(drop=True)
+    return top5_by_year
+
+
+x = most_co2_by_year(co2_sy)
+print(x)

@@ -29,8 +29,8 @@ non_year_colnames = ['Country Name', 'Country Code', 'Indicator Name', 'Indicato
 common_years = set.intersection(set(co2['Year']), set(map(int_if_possible, gdp.columns)),
                                 set(map(int_if_possible, population.columns)))
 
-start = 1970
-end = 2000
+start = 1960
+end = 2014
 
 
 # common_years = list(map(str, common_years))
@@ -59,14 +59,14 @@ def selected_yrs_dfs(start, end, gdp, population, co2):
 
 gdp_sy, population_sy, co2_sy = selected_yrs_dfs(start, end, gdp_cy, population_cy, co2_cy)
 
-
+# auxiliary function
 def is_top(year, pc, idx_most):
     if pc >= idx_most.at[year, 'fifth_max']:
         return 1
     else:
         return 0
 
-
+# auxiliary function
 def fifth_max(x):
     return x.nlargest(5).min()
 
@@ -86,7 +86,7 @@ x = top_5_co2_by_year(co2_sy)
 # print(x)
 
 
-def gdp_by_year(gdp, population, start, end):
+def gdp_pc_by_year(gdp, population, start, end):
     str_years = list(map(str, list(range(start, end + 1)))) # list of strings of considered years
     a = pd.merge(gdp, population, on='Country Name') # gdp and population with columns _x with gdp, _y with population
     year_merge_cols = ['Country Name'] + [yr + '_x' for yr in str_years] + [yr + '_y' for yr in str_years]
@@ -95,23 +95,19 @@ def gdp_by_year(gdp, population, start, end):
         gdp_pop2 = gdp_pop.copy()
         gdp_pop2[yr + '_pc'] = gdp_pop[yr + '_x'] / gdp_pop[yr + '_y']
         gdp_pop = gdp_pop2
+    return gdp_pop
+
+def gdp_top_5_by_year(gdp_pop, start, end):
+    str_years = list(map(str, list(range(start, end + 1))))  # list of strings of considered years
     year_pc_cols = ['Country Name'] + [yr + '_x' for yr in str_years] + [yr + '_pc' for yr in str_years]
-    gdp_top_5 = pd.DataFrame(columns = ['Year', 'Country Name', 'gdp_pc', 'gdp']) # empty df with expected columns
+    gdp_top_5 = pd.DataFrame(columns=['Year', 'Country Name', 'gdp_pc', 'gdp'])  # empty df with expected columns
     for yr in str_years:
-        gdp_top_year = gdp_pop[year_pc_cols].nlargest(5, yr + '_pc') # 5 rows with top5 gdp per capita for year yr
-        gdp_top_year['Year'] = yr # new column
+        gdp_top_year = gdp_pop[year_pc_cols].nlargest(5, yr + '_pc')  # 5 rows with top5 gdp per capita for year yr
+        gdp_top_year['Year'] = yr  # new column
         gdp_to_add = gdp_top_year[['Year', 'Country Name', yr + '_pc', yr + '_x']]. \
-            rename(columns = {yr + '_pc': 'gdp_pc', yr + '_x': 'gdp' }, inplace = False) # select and rename columns
-        gdp_top_5 = pd.concat([gdp_top_5, gdp_to_add]) # add results for year yr
+            rename(columns={yr + '_pc': 'gdp_pc', yr + '_x': 'gdp'}, inplace=False)  # select and rename columns
+        gdp_top_5 = pd.concat([gdp_top_5, gdp_to_add])  # add results for year yr
     return gdp_top_5
 
-
-# print(a)
-# _x - gdp, _y - population
-
-# col_triples = [[yr, yr + '_x', yr + '_y'] for yr in str_years]
-
-
-
-b = gdp_by_year(gdp_sy, population_sy, 1970, 2000)
+b = gdp_top_5_by_year(gdp_pc_by_year(gdp_sy, population_sy, start, end), start, end)
 print("ok")

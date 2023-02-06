@@ -110,4 +110,3 @@ def gdp_top_5_by_year(gdp_pop, start, end):
     return gdp_top_5
 
 b = gdp_top_5_by_year(gdp_pc_by_year(gdp_sy, population_sy, start, end), start, end)
-print("ok")

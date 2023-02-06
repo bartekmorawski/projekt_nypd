@@ -29,6 +29,9 @@ non_year_colnames = ['Country Name', 'Country Code', 'Indicator Name', 'Indicato
 common_years = set.intersection(set(co2['Year']), set(map(int_if_possible, gdp.columns)),
                                 set(map(int_if_possible, population.columns)))
 
+start = 1970
+end = 2000
+
 
 # common_years = list(map(str, common_years))
 # print(gdp[non_year_colnames + list(map(str, common_years))])
@@ -72,10 +75,42 @@ def top_5_co2_by_year(co2):
     pc_5_value_by_year = co2.groupby(['Year']).agg({'Per Capita': [fifth_max]})
     pc_5_value_by_year.columns = pc_5_value_by_year.columns.droplevel(0)
     idx_top5 = [is_top(year, pc, pc_5_value_by_year) for year, pc in zip(co2['Year'], co2['Per Capita'])]
-    top5_by_year = co2[np.array(idx_top5, dtype=bool)][['Year', 'Country', 'Per Capita', 'Total']]\
+    top5_by_year = co2[np.array(idx_top5, dtype=bool)][['Year', 'Country', 'Per Capita', 'Total']] \
         .reset_index(drop=True)
     return top5_by_year
 
 
 x = top_5_co2_by_year(co2_sy)
-print(x)
+
+
+# print(x)
+
+
+def gdp_by_year(gdp, population, start, end):
+    str_years = list(map(str, list(range(start, end + 1))))
+    a = pd.merge(gdp, population, on='Country Name')
+    year_merge_cols = ['Country Name'] + [yr + '_x' for yr in str_years] + [yr + '_y' for yr in str_years]
+    gdp_pop = a[year_merge_cols]
+    for yr in str_years:
+        gdp_pop2 = gdp_pop.copy()
+        gdp_pop2[yr + '_pc'] = gdp_pop[yr + '_x'] / gdp_pop[yr + '_y']
+        gdp_pop = gdp_pop2
+    year_pc_cols = ['Country Name'] + [yr + '_x' for yr in str_years] + [yr + '_pc' for yr in str_years]
+    gdp_top_5 = pd.DataFrame(columns = ['Year', 'Country Name', 'gdp_pc', 'gdp'])
+    for yr in str_years:
+        gdp_top_year = gdp_pop[year_pc_cols].nlargest(5, yr + '_pc')
+        gdp_top_year['Year'] = yr
+        gdp_to_add = gdp_top_year[['Year', 'Country Name', yr + '_pc', yr + '_x']].rename(columns = {yr + '_pc': 'gdp_pc', yr + '_x': 'gdp' }, inplace = False)
+        gdp_top_5 = pd.concat([gdp_top_5, gdp_to_add])
+    return gdp_top_5
+
+
+# print(a)
+# _x - gdp, _y - population
+
+# col_triples = [[yr, yr + '_x', yr + '_y'] for yr in str_years]
+
+
+
+b = gdp_by_year(gdp_sy, population_sy, 1970, 2000)
+print("ok")

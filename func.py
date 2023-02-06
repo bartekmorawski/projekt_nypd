@@ -57,7 +57,7 @@ def selected_yrs_dfs(start, end, gdp, population, co2):
     return gdp_sy, population_sy, co2_sy
 
 
-gdp_sy, population_sy, co2_sy = selected_yrs_dfs(1970, 2000, gdp_cy, population_cy, co2_cy)
+gdp_sy, population_sy, co2_sy = selected_yrs_dfs(start, end, gdp_cy, population_cy, co2_cy)
 
 
 def is_top(year, pc, idx_most):
@@ -87,21 +87,22 @@ x = top_5_co2_by_year(co2_sy)
 
 
 def gdp_by_year(gdp, population, start, end):
-    str_years = list(map(str, list(range(start, end + 1))))
-    a = pd.merge(gdp, population, on='Country Name')
+    str_years = list(map(str, list(range(start, end + 1)))) # list of strings of considered years
+    a = pd.merge(gdp, population, on='Country Name') # gdp and population with columns _x with gdp, _y with population
     year_merge_cols = ['Country Name'] + [yr + '_x' for yr in str_years] + [yr + '_y' for yr in str_years]
-    gdp_pop = a[year_merge_cols]
-    for yr in str_years:
+    gdp_pop = a[year_merge_cols] # selected columns
+    for yr in str_years: # adds new columns with gdp per capita for each year
         gdp_pop2 = gdp_pop.copy()
         gdp_pop2[yr + '_pc'] = gdp_pop[yr + '_x'] / gdp_pop[yr + '_y']
         gdp_pop = gdp_pop2
     year_pc_cols = ['Country Name'] + [yr + '_x' for yr in str_years] + [yr + '_pc' for yr in str_years]
-    gdp_top_5 = pd.DataFrame(columns = ['Year', 'Country Name', 'gdp_pc', 'gdp'])
+    gdp_top_5 = pd.DataFrame(columns = ['Year', 'Country Name', 'gdp_pc', 'gdp']) # empty df with expected columns
     for yr in str_years:
-        gdp_top_year = gdp_pop[year_pc_cols].nlargest(5, yr + '_pc')
-        gdp_top_year['Year'] = yr
-        gdp_to_add = gdp_top_year[['Year', 'Country Name', yr + '_pc', yr + '_x']].rename(columns = {yr + '_pc': 'gdp_pc', yr + '_x': 'gdp' }, inplace = False)
-        gdp_top_5 = pd.concat([gdp_top_5, gdp_to_add])
+        gdp_top_year = gdp_pop[year_pc_cols].nlargest(5, yr + '_pc') # 5 rows with top5 gdp per capita for year yr
+        gdp_top_year['Year'] = yr # new column
+        gdp_to_add = gdp_top_year[['Year', 'Country Name', yr + '_pc', yr + '_x']]. \
+            rename(columns = {yr + '_pc': 'gdp_pc', yr + '_x': 'gdp' }, inplace = False) # select and rename columns
+        gdp_top_5 = pd.concat([gdp_top_5, gdp_to_add]) # add results for year yr
     return gdp_top_5
 
 

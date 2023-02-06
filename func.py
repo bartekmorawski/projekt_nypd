@@ -23,14 +23,29 @@ def int_if_possible(input_str):
         return None
 
 # drop empty columns (last), define non-year colnames for gdp and population dfs, fins years in all 3 dfs
-gdp.dropna(how='all', axis=1, inplace=True)
-population.dropna(how='all', axis=1, inplace=True)
-non_year_colnames = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code']
-common_years = set.intersection(set(co2['Year']), set(map(int_if_possible, gdp.columns)),
-                                set(map(int_if_possible, population.columns)))
+# gdp.dropna(how='all', axis=1, inplace=True)
+# population.dropna(how='all', axis=1, inplace=True)
+# non_year_colnames = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code']
+# common_years = set.intersection(set(co2['Year']), set(map(int_if_possible, gdp.columns)),
+#                                 set(map(int_if_possible, population.columns)))
 
-start = 1960
-end = 2014
+# default_start = 1960
+# default_end = 2014
+# begin = 1970
+# finish = 2000
+
+def yr_or_default(year, default, common_yrs):
+    if year in common_yrs:
+        return year
+    else:
+        return default
+
+# start = yr_or_default(begin, default_start, common_years)
+# end = yr_or_default(finish, default_end, common_years)
+
+def save_xlsx(df, name):
+    with pd.ExcelWriter(name) as writer:
+        df.to_excel(writer, sheet_name=name)
 
 
 # common_years = list(map(str, common_years))
@@ -39,25 +54,25 @@ end = 2014
 # print(co2.loc[co2['Year'].isin(common_years)])
 
 # Common Years dataframes
-def common_yrs_dfs(gdp, population, co2):
+def common_yrs_dfs(gdp, population, co2, non_year_colnames, common_years):
     gdp_cy = gdp[non_year_colnames + list(map(str, common_years))]
     population_cy = population[non_year_colnames + list(map(str, common_years))]
     co2_cy = co2.loc[co2['Year'].isin(common_years)]
     return gdp_cy, population_cy, co2_cy
 
 
-gdp_cy, population_cy, co2_cy = common_yrs_dfs(gdp, population, co2)
+# gdp_cy, population_cy, co2_cy = common_yrs_dfs(gdp, population, co2)
 
 
 # common and Selected Years dataframes
-def selected_yrs_dfs(start, end, gdp, population, co2):
+def selected_yrs_dfs(start, end, gdp, population, co2, non_year_colnames):
     gdp_sy = gdp[non_year_colnames + list(map(str, range(start, end + 1)))]
     population_sy = population[non_year_colnames + list(map(str, range(start, end + 1)))]
     co2_sy = co2.loc[co2['Year'].isin(range(start, end + 1))]
     return gdp_sy, population_sy, co2_sy
 
 
-gdp_sy, population_sy, co2_sy = selected_yrs_dfs(start, end, gdp_cy, population_cy, co2_cy)
+# gdp_sy, population_sy, co2_sy = selected_yrs_dfs(start, end, gdp_cy, population_cy, co2_cy)
 
 # auxiliary function
 def is_top(year, pc, idx_most):
@@ -80,7 +95,7 @@ def top_5_co2_by_year(co2):
     return top5_by_year
 
 
-x = top_5_co2_by_year(co2_sy)
+# x = top_5_co2_by_year(co2_sy)
 
 # df with added columns with gdp per capita for each year
 def gdp_pc_by_year(gdp, population, start, end):
@@ -94,6 +109,8 @@ def gdp_pc_by_year(gdp, population, start, end):
         gdp_pop = gdp_pop2
     return gdp_pop
 
+
+# given df (returned by gdp_pc_by_year) find top5 for each year with expected columns
 def gdp_top_5_by_year(gdp_pop, start, end):
     str_years = list(map(str, list(range(start, end + 1))))  # list of strings of considered years
     year_pc_cols = ['Country Name'] + [yr + '_x' for yr in str_years] + [yr + '_pc' for yr in str_years]
@@ -106,4 +123,4 @@ def gdp_top_5_by_year(gdp_pop, start, end):
         gdp_top_5 = pd.concat([gdp_top_5, gdp_to_add])  # add results for year yr
     return gdp_top_5
 
-b = gdp_top_5_by_year(gdp_pc_by_year(gdp_sy, population_sy, start, end), start, end)
+# b = gdp_top_5_by_year(gdp_pc_by_year(gdp_sy, population_sy, start, end), start, end)

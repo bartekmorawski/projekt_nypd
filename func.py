@@ -87,7 +87,7 @@ def gdp_top_5_by_year(gdp_pop, start, end):
         gdp_to_add = gdp_top_year[['Year', 'Country Name', yr + '_pc', yr + '_x']]. \
             rename(columns={yr + '_pc': 'gdp_pc', yr + '_x': 'gdp'}, inplace=False)  # select and rename columns
         gdp_top_5 = pd.concat([gdp_top_5, gdp_to_add])  # add results for year yr
-    return gdp_top_5
+    return gdp_top_5.reset_index()
 
 
 # return two countires: in-/decreased co2 per capita the most (or increased the least/decreased the least)

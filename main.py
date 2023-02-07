@@ -42,10 +42,9 @@ if args.start > args.end:
     warnings.warn('Year interval is empty, defaulted to 1960-2014')
     start = default_start
     end = default_end
-
-
-start = func.yr_or_default(args.start, default_start, common_years)
-end = func.yr_or_default(args.end, default_end, common_years)
+else:
+    start = func.yr_or_default(args.start, default_start, common_years)
+    end = func.yr_or_default(args.end, default_end, common_years)
 
 gdp_cy, population_cy, co2_cy = func.common_yrs_dfs(gdp, population, co2, non_year_colnames, common_years)
 gdp_sy, population_sy, co2_sy = func.selected_yrs_dfs(start, end, gdp_cy, population_cy, co2_cy, non_year_colnames)

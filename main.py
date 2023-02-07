@@ -56,4 +56,3 @@ co2_change = func.top_10_yr_co2_change(co2_sy, start, end)
 func.save_xlsx(co2_5_yr, 'top_co2.xlsx')
 func.save_xlsx(gdp_5_yr, 'top_gdp.xlsx')
 func.save_xlsx(co2_change, 'co2_10yr_change.xlsx')
-

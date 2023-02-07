@@ -60,7 +60,7 @@ def top_5_co2_by_year(co2):
     idx_top5 = [is_top(year, pc, pc_5_value_by_year) for year, pc in zip(co2['Year'], co2['Per Capita'])]  # indexes
     top5_by_year = co2[np.array(idx_top5, dtype=bool)][['Year', 'Country', 'Per Capita', 'Total']] \
         .reset_index(drop=True)  # select columns by names and rows with indexes
-    return top5_by_year
+    return top5_by_year.reset_index()
 
 
 # df with added columns with gdp per capita for each year
@@ -105,4 +105,4 @@ def top_10_yr_co2_change(co2, start, end):
                                  co2_pc_change[co2_pc_change['Per Capita'] == co2_pc_change['Per Capita'].min()]])
     co2_2_renamed = co2_2_countries[['Country', 'Per Capita']]. \
         rename(columns={'Per Capita': 'co2 per capita change'}, inplace=False)
-    return co2_2_renamed
+    return co2_2_renamed.reset_index()

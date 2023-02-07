@@ -44,11 +44,12 @@ end = func.yr_or_default(args.end, default_end, common_years)
 
 gdp_cy, population_cy, co2_cy = func.common_yrs_dfs(gdp, population, co2, non_year_colnames, common_years)
 gdp_sy, population_sy, co2_sy = func.selected_yrs_dfs(start, end, gdp_cy, population_cy, co2_cy, non_year_colnames)
-x = func.top_5_co2_by_year(co2_sy)
-b = func.gdp_top_5_by_year(func.gdp_pc_by_year(gdp_sy, population_sy, start, end), start, end)
-test = func.top_10_yr_co2_change(co2_sy, start, end)
-func.save_xlsx(x, 'top_co2.xlsx')
-func.save_xlsx(b, 'top_gdp.xlsx')
-func.save_xlsx(test, 'co2_10yr_change.xlsx')
+co2_5_yr = func.top_5_co2_by_year(co2_sy)
+gdp_5_yr = func.gdp_top_5_by_year(func.gdp_pc_by_year(gdp_sy, population_sy, start, end), start, end)
+co2_change = func.top_10_yr_co2_change(co2_sy, start, end)
 
-print('x')
+
+func.save_xlsx(co2_5_yr, 'top_co2.xlsx')
+func.save_xlsx(gdp_5_yr, 'top_gdp.xlsx')
+func.save_xlsx(co2_change, 'co2_10yr_change.xlsx')
+

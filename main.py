@@ -2,6 +2,7 @@ import argparse
 import os
 import pandas as pd
 import func
+import warnings
 
 # used if given start and end are not in common years for data sets
 default_start = 1960
@@ -36,7 +37,13 @@ non_year_colnames = ['Country Name', 'Country Code', 'Indicator Name', 'Indicato
 common_years = set.intersection(set(co2['Year']), set(map(func.int_if_possible, gdp.columns)),
                                 set(map(func.int_if_possible, population.columns)))
 
-# without given year - 1960/2014, if given not in common years - 1960/2014, if ok then given
+# without given year/given yrs not in common yrs/empty interval 1960/2014, if ok then given from parser
+if args.start > args.end:
+    warnings.warn('Year interval is empty, defaulted to 1960-2014')
+    start = default_start
+    end = default_end
+
+
 start = func.yr_or_default(args.start, default_start, common_years)
 end = func.yr_or_default(args.end, default_end, common_years)
 

@@ -3,15 +3,10 @@ import os
 import pandas as pd
 import func
 
-
+# used if given start and end are not in common years for data sets
 default_start = 1960
 default_end = 2014
 
-# def file_path(path):
-#     if os.path.isfile(path):
-#         return path
-#     else:
-#         raise argparse.ArgumentTypeError(f"readable_file:{path} is not a valid path")
 
 cwd = os.getcwd()
 
@@ -33,12 +28,15 @@ gdp = pd.read_csv(args.file_NY, skiprows=4)
 population = pd.read_csv(args.file_SP, skiprows=4)
 co2 = pd.read_csv(args.file_co2, skiprows=0)
 
+
+# drop empty columns (in this data las ones)
 gdp.dropna(how='all', axis=1, inplace=True)
 population.dropna(how='all', axis=1, inplace=True)
 non_year_colnames = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code']
 common_years = set.intersection(set(co2['Year']), set(map(func.int_if_possible, gdp.columns)),
                                 set(map(func.int_if_possible, population.columns)))
 
+# without given year - 1960/2014, if given not in common years - 1960/2014, if ok then given
 start = func.yr_or_default(args.start, default_start, common_years)
 end = func.yr_or_default(args.end, default_end, common_years)
 
@@ -48,7 +46,7 @@ co2_5_yr = func.top_5_co2_by_year(co2_sy)
 gdp_5_yr = func.gdp_top_5_by_year(func.gdp_pc_by_year(gdp_sy, population_sy, start, end), start, end)
 co2_change = func.top_10_yr_co2_change(co2_sy, start, end)
 
-
+# outputs to xlsx files
 func.save_xlsx(co2_5_yr, 'top_co2.xlsx')
 func.save_xlsx(gdp_5_yr, 'top_gdp.xlsx')
 func.save_xlsx(co2_change, 'co2_10yr_change.xlsx')

@@ -124,3 +124,20 @@ def gdp_top_5_by_year(gdp_pop, start, end):
     return gdp_top_5
 
 # b = gdp_top_5_by_year(gdp_pc_by_year(gdp_sy, population_sy, start, end), start, end)
+
+# return two countires: in-/decreased co2 per capita the most (or increased the least/decreased the least)
+# meant to be called with co2 with selected years
+# if end < start + 10 then compare earliest possible year and end year
+# start - EARLIEST YEAR of co2 (start given by parser), end - desired end year
+def top_10_yr_co2_change(co2, start, end):
+    start_yr = max(start, end-10)
+    co2_border_yrs = co2.loc[co2['Year'].isin([start_yr, end])]
+    co2_border_yrs.loc[(co2_border_yrs['Year'] == start_yr), 'Per Capita'] = -co2_border_yrs['Per Capita']
+    data_num_yrs = co2_border_yrs.groupby(['Country']).size().reset_index(name='counts')
+    co2_act = co2_border_yrs[co2_border_yrs['Country'].isin(list(data_num_yrs[data_num_yrs['counts'] == 2]['Country']))]
+    co2_pc_change = co2_act.groupby(['Country']).agg('sum').reset_index() # absurd, but per capita column is ok
+    co2_2_countries = pd.concat([co2_pc_change[co2_pc_change['Per Capita'] == co2_pc_change['Per Capita'].max()],
+                                 co2_pc_change[co2_pc_change['Per Capita'] == co2_pc_change['Per Capita'].min()]])
+    co2_2_renamed = co2_2_countries[['Country', 'Per Capita']]. \
+            rename(columns={'Per Capita': 'co2 per capita change'}, inplace=False)
+    return co2_2_renamed

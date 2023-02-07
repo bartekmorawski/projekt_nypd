@@ -4,6 +4,7 @@
 /.idea/
 top_co2.xlsx
 top_gdp.xlsx
+co2_10yr_change.xlsx
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -5,6 +5,6 @@ setuptools.setup(
     version='1.0',
     license='BSD 2-clause',
     author="bartek morawski",
-    packages=packages=['nypd'],
+    packages=['nypd'],
     install_requires=['pandas', 'numpy', 'argparse', 'openpyxl']
 )

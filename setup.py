@@ -6,5 +6,5 @@ setuptools.setup(
     license='BSD 2-clause',
     author="bartek morawski",
     packages=setuptools.find_packages(),
-    install_requires=['pandas', 'numpy', 'argparse', 'os', 'openpyxl', 'warnings']
+    install_requires=['pandas', 'numpy', 'argparse', 'openpyxl', 'warnings']
 )

@@ -1,7 +1,7 @@
 import argparse
 import os
 import pandas as pd
-import func
+from . import func
 import warnings
 
 # used if given start and end are not in common years for data sets

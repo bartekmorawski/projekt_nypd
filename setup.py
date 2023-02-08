@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name="NPDprojekt",
+    name="nypd",
     version='1.0',
     license='BSD 2-clause',
     author="bartek morawski",

@@ -38,5 +38,5 @@ df_co2_top_res = pd.DataFrame({"Year": [0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
 
 @pytest.mark.parametrize("co2_par, res_co2", [(df_co2_top, df_co2_top_res)])
 def test_top_5_co2_by_year(co2_par, res_co2):
-    jp = func.top_5_co2_by_year(co2_par)
-    assert jp.equals(res_co2)
+    top_by_yr = func.top_5_co2_by_year(co2_par)
+    assert top_by_yr.equals(res_co2)

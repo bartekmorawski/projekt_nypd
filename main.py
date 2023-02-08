@@ -30,7 +30,7 @@ population = pd.read_csv(args.file_SP, skiprows=4)
 co2 = pd.read_csv(args.file_co2, skiprows=0)
 
 
-# drop empty columns (in this data las ones)
+# drop empty columns (in this data last ones)
 gdp.dropna(how='all', axis=1, inplace=True)
 population.dropna(how='all', axis=1, inplace=True)
 non_year_colnames = ['Country Name', 'Country Code', 'Indicator Name', 'Indicator Code']
@@ -48,6 +48,8 @@ else:
 
 gdp_cy, population_cy, co2_cy = func.common_yrs_dfs(gdp, population, co2, non_year_colnames, common_years)
 gdp_sy, population_sy, co2_sy = func.selected_yrs_dfs(start, end, gdp_cy, population_cy, co2_cy, non_year_colnames)
+
+
 co2_5_yr = func.top_5_co2_by_year(co2_sy)
 gdp_5_yr = func.gdp_top_5_by_year(func.gdp_pc_by_year(gdp_sy, population_sy, start, end), start, end)
 co2_change = func.top_10_yr_co2_change(co2_sy, start, end)
